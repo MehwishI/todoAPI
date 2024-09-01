@@ -70,6 +70,9 @@ app.get('/api/todo/edit/:Id', (req, res) => {
 });
 
 app.post('/api/todo/new', (req, res) => {
+    if (req.body.task === null || req.body.completed === null) {
+        return new Error("Task details not entered!")
+    }
     const newTodo = req.body;
     newTodo.id = uid(3);
   
@@ -79,6 +82,9 @@ app.post('/api/todo/new', (req, res) => {
 
 app.post('/api/edit/todo/:id', (req, res) => {
     const todoId = req.params.id;
+     if (req.body.task === null || req.body.completed === null) {
+        return new Error("Task details not entered!")
+    }
     for(let i = 0; i < todoList.length; i ++){
         if(todoList[i].id === id){
             todoList[i].task = req.body.task;
