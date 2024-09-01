@@ -14,6 +14,11 @@ const todoList = [{
   id: '2',
   task: "Doing Laundry",
   completed: true
+    },
+{
+  id: '3',
+  task: "Preparing Reports",
+  completed: false
 }];
 const app = express();
 app.set('view engine', 'ejs');
@@ -25,6 +30,9 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/todos', (req, res) => {
+    if (todoList.length === 0) {
+        return new Error("Status= 500, Todo List empty! No tasks available.")
+    }
     const templateVars = {
         todoList: todoList
         statusCode: 200;
@@ -49,7 +57,7 @@ app.get('/api/todos/:id', (req, res) => {
         statusCode: null
     }
     if(!foundTodo){
-        templateVars.issue = "This task doesn't exists!";
+        templateVars.issue = "This task doesn't exist!";
         templateVars.statusCode = 500;
     }
     console.log(templateVars );
@@ -97,11 +105,12 @@ app.post('/api/edit/todo/:id', (req, res) => {
 app.post('/api/delete/todo/:id', (req, res) => {
     const todoId = req.params.id;
     const todoIndex = todoList.findIndex((todo) => {
-        if(todoId === todo.id){
+        if (todoId === todo.id) {
             return todo;
         }
+        else return new Error("Task not found with this id!");
     });
-   todoList.splice(todoIndex, 1);
+   todoList.splice(todoIndex, 1); //deleting the task from the array
     res.redirect('/api/todos');
 });
 
@@ -109,4 +118,3 @@ app.listen(PORT, () => {
     console.log(`This server is running in port ${PORT}.`);
 });
 
-// http://localhost:8080/
