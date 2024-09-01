@@ -14,7 +14,7 @@ const todoList = [{
   id: '2',
   task: "Doing Laundry",
   completed: true
-    },
+},
 {
   id: '3',
   task: "Preparing Reports",
@@ -32,8 +32,8 @@ app.get('/', (req, res) => {
 app.get('/api/todos', (req, res) => {
    
     const templateVars = {
-        todoList: todoList
-        statusCode: 200;
+        todoList: todoList,
+        statusCode: 200
     };
      if (todoList.length === 0) {
          templateVars.issue = "Task list empty!. No tasks available",
@@ -80,8 +80,8 @@ app.get('/api/todo/edit/:Id', (req, res) => {
     }
     if (!foundTodo) {
         templateVars = {
-            issue= "Task not found with this id!",
-            statusCode = 500
+            issue : "Task not found with this id!",
+            statusCode : 500
        }
         
     }
