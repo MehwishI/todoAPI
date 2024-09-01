@@ -30,13 +30,16 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/todos', (req, res) => {
-    if (todoList.length === 0) {
-        return new Error("Status= 500, Todo List empty! No tasks available.")
-    }
+   
     const templateVars = {
         todoList: todoList
         statusCode: 200;
     };
+     if (todoList.length === 0) {
+         templateVars.issue = "Task list empty!. No tasks available",
+         templateVars.statusCode = 500
+    }
+    
     res.render('todos', templateVars);
 });
 
@@ -70,9 +73,17 @@ app.get('/api/todo/edit/:Id', (req, res) => {
         if(todo.id === todoId){
             return todoId;
         }
+        
     });
     const templateVars = {
         todo : foundTodo
+    }
+    if (!foundTodo) {
+        templateVars = {
+            issue= "Task not found with this id!",
+            statusCode = 500
+       }
+        
     }
     res.render('edit-todo', templateVars);
 });
@@ -104,12 +115,16 @@ app.post('/api/edit/todo/:id', (req, res) => {
 
 app.post('/api/delete/todo/:id', (req, res) => {
     const todoId = req.params.id;
+    //finding index of the task
     const todoIndex = todoList.findIndex((todo) => {
         if (todoId === todo.id) {
             return todo;
         }
-        else return new Error("Task not found with this id!");
+         
     });
+    if (!todoIndex) {
+        return new Error("Unable to delete! Task not found with this id!");
+    }
    todoList.splice(todoIndex, 1); //deleting the task from the array
     res.redirect('/api/todos');
 });
