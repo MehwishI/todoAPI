@@ -4,7 +4,7 @@ const morgan = require('morgan');
 const {uid} = require('uid');
 
 const PORT = 8080;
-//{"task": "Buy groceries", "completed": false}
+
 const todoList = [{
   id: '1',
   task: "Buy groceries",
@@ -36,15 +36,14 @@ app.get('/api/todos', (req, res) => {
         statusCode: 200
     };
      if (todoList.length === 0) {
-         templateVars.issue = "Task list empty!. No tasks available",
-         templateVars.statusCode = 500
+        return res.status(404).send("Todo List not available!")
     }
     
-    res.render('todos', templateVars);
+    res.status(200).render('todos', templateVars);
 });
 
 app.get('/api/todo/form', (req, res) => {
-    res.render('new-todo');
+    res.status(200).render('new-todo');
 });
 
 app.get('/api/todo/:id', (req, res) => {
@@ -57,13 +56,13 @@ app.get('/api/todo/:id', (req, res) => {
     const templateVars = {
         todo : foundTodo,
         issue: false,
-        statusCode: null
+        
     }
     if(!foundTodo){
         return res.status(404).send('Todo not found!, Please try again.');
     }
   
-    res.render('todo-detail', templateVars);
+    res.status(200).render('todo-detail', templateVars);
 });
 
 app.get('/api/todo/edit/:Id', (req, res) => {
@@ -81,7 +80,7 @@ app.get('/api/todo/edit/:Id', (req, res) => {
           return res.status(404).send('Task not found!, Please try again.');
         
     }
-    res.render('edit-todo', templateVars);
+    res.status(200).render('edit-todo', templateVars);
 });
 
 app.post('/api/todo/new', (req, res) => {
@@ -94,7 +93,7 @@ app.post('/api/todo/new', (req, res) => {
     newTodo.id = uid(3);
   
     todoList.push(newTodo);
-    res.status(200).redirect('/api/todos');
+    res.status(201).redirect('/api/todos');
 });
 
 app.post('/api/edit/todo/:id', (req, res) => {
@@ -109,7 +108,7 @@ app.post('/api/edit/todo/:id', (req, res) => {
             todoList[i].completed = completed || todoList[i].completed;
         }
     }
-    res.status(200).redirect(`/api/todo/${todoId}`);
+    res.status(201).redirect(`/api/todo/${todoId}`);
 });
 
 app.post('/api/delete/todo/:id', (req, res) => {
@@ -125,7 +124,7 @@ app.post('/api/delete/todo/:id', (req, res) => {
         return res.status(404).send("Task not found!")
     }
    todoList.splice(todoIndex, 1); //deleting the task from the array
-    res.status(200).redirect('/api/todos');
+    res.status(201).redirect('/api/todos');
 });
 
 app.listen(PORT, () => {
