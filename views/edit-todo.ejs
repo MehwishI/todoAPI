@@ -4,25 +4,25 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title> New Todo</title>
+        <title> Edit Todo </title>
     </head>
     <body>
-        <h1> Add a new todo to the movie list </h1>
-        <form action="/api/todo/new" method="POST">
+        <h1> Edit any of the fields of the todo </h1>
+        <form action="/api/edit/todo/<%= todo.id %>" method="POST">
             <div>
                 <label for="task">
                     Task:
                 </label>
-                <input type="text" id="task" name="task">
+                <input type="text" id="task" name="task" value="<%= todo.task %>">
             </div>
             <div>
                 <label for="completed">
-                    Director:
+                    Completed:
                 </label>
-                <input type="text" id="completed" name="completed">
+                <input type="text" id="completed" name="completed" value="<%= todo.completed %>">
             </div>
             <button type="submit">
-                Add movie
+                Edit Todo
             </button>
         </form>
     </body>

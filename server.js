@@ -47,10 +47,10 @@ app.get('/api/todo/form', (req, res) => {
     res.render('new-todo');
 });
 
-app.get('/api/todos/:id', (req, res) => {
+app.get('/api/todo/:id', (req, res) => {
     const todoId = req.params.id;
     const foundTodo = todoList.find((todo) => {
-        if(todo.id === id){
+        if(todo.id === todoId){
             return todoId;
         }
     });
@@ -60,10 +60,9 @@ app.get('/api/todos/:id', (req, res) => {
         statusCode: null
     }
     if(!foundTodo){
-        templateVars.issue = "This task doesn't exist!";
-        templateVars.statusCode = 500;
+        return res.status(404).send('Todo not found!, Please try again.');
     }
-    console.log(templateVars );
+  
     res.render('todo-detail', templateVars);
 });
 
@@ -79,38 +78,38 @@ app.get('/api/todo/edit/:Id', (req, res) => {
         todo : foundTodo
     }
     if (!foundTodo) {
-        templateVars = {
-            issue : "Task not found with this id!",
-            statusCode : 500
-       }
+          return res.status(404).send('Task not found!, Please try again.');
         
     }
     res.render('edit-todo', templateVars);
 });
 
 app.post('/api/todo/new', (req, res) => {
-    if (req.body.task === null || req.body.completed === null) {
-        return new Error("Task details not entered!")
+   
+    const { task, completed } = req.body; 
+    if (!task || !completed) {
+        return res.status(400).send("Please enter all task details to add a new todo !");
     }
     const newTodo = req.body;
     newTodo.id = uid(3);
   
     todoList.push(newTodo);
-    res.redirect('/api/todos');
+    res.status(200).redirect('/api/todos');
 });
 
 app.post('/api/edit/todo/:id', (req, res) => {
     const todoId = req.params.id;
-     if (req.body.task === null || req.body.completed === null) {
-        return new Error("Task details not entered!")
+    const { task, completed } = req.body; 
+    if (!task || !completed) {
+        return res.status(400).send("Task details missing. Please enter all task details to save!");
     }
     for(let i = 0; i < todoList.length; i ++){
-        if(todoList[i].id === id){
-            todoList[i].task = req.body.task;
-            todoList[i].completed = req.body.completed;
+        if(todoList[i].id === todoId){
+            todoList[i].task = task || todoList[i].task;
+            todoList[i].completed = completed || todoList[i].completed;
         }
     }
-    res.redirect(`/api/todos/${todoId}`);
+    res.status(200).redirect(`/api/todo/${todoId}`);
 });
 
 app.post('/api/delete/todo/:id', (req, res) => {
@@ -122,11 +121,11 @@ app.post('/api/delete/todo/:id', (req, res) => {
         }
          
     });
-    if (!todoIndex) {
-        return new Error("Unable to delete! Task not found with this id!");
+    if (todoIndex === -1) {
+        return res.status(404).send("Task not found!")
     }
    todoList.splice(todoIndex, 1); //deleting the task from the array
-    res.redirect('/api/todos');
+    res.status(200).redirect('/api/todos');
 });
 
 app.listen(PORT, () => {
